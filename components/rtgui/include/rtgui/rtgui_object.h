@@ -56,7 +56,12 @@ extern "C" {
     typedef struct rtgui_type rtgui_type_t;
 #define RTGUI_TYPE(type)            (struct rtgui_type*)&(_rtgui_##type)
 
+#ifdef RTT_IN_MODULE
+#define DECLARE_CLASS_TYPE(type)    _declspec(dllimport) const struct rtgui_type _rtgui_##type
+#else
 #define DECLARE_CLASS_TYPE(type)    extern const struct rtgui_type _rtgui_##type
+#endif
+
 #define DEFINE_CLASS_TYPE(type, name, parent, constructor, destructor, size) \
     const struct rtgui_type _rtgui_##type = { \
     name, \
