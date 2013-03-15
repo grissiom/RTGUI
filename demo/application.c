@@ -2,15 +2,6 @@
 
 void init_entry(void *param)
 {
-    rt_device_t device;
-	/* init driver */
-	rt_hw_sdl_start();
-	device = rt_device_find("sdl");
-	rtgui_graphic_set_device(device);
-
-	/* init gui system */
-	rtgui_system_server_init();
-
 	application_init();
 }
 

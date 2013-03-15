@@ -90,12 +90,10 @@ path_jn = os.path.join
 BSP_ROOT = path_jn(RTT_ROOT, 'bsp/simulator')
 
 # make use of bsp/simulator
-sim_objs  = SConscript(path_jn(BSP_ROOT, 'applications/SConscript'),
-					   variant_dir='build/simulator/sim-app',
+sim_objs = SConscript(GetCurrentDir() + '/sim-common/SConscript',
+					   variant_dir='build/simulator/sim-com',
 					   duplicate=0)
-# remove the staff we don't need. When "bsp" becomes real bsp, this hack
-# could be removed. Remember to update this list if simulator changed.
-SrcRemove(sim_objs, ['application.obj'])
+
 sim_objs.extend(SConscript(path_jn(BSP_ROOT, 'drivers/SConscript'),
 					   variant_dir='build/simulator/sim-drv',
 					   duplicate=0))
