@@ -1,6 +1,8 @@
 #ifndef __TEXT_ENCODING_H__
 #define __TEXT_ENCODING_H__
 
+#include <stddef.h>
+
 struct rtgui_char_position
 {
     /* Keep the size of this struct within 4 bytes so it can be passed by

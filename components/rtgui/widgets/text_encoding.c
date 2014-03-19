@@ -17,7 +17,7 @@ struct rtgui_char_position _string_char_width(char *str, size_t len, size_t offs
 
     pc = (unsigned char*)str;
 
-    while (pc <= str + offset)
+    while (pc <= (unsigned char*)str + offset)
     {
         if (pc[0] < 0x80)
         {
@@ -50,6 +50,6 @@ struct rtgui_char_position _string_char_width(char *str, size_t len, size_t offs
         }
         pc += pos.char_width;
     }
-    pos.remain = pc - &str[offset];
+    pos.remain = pc - (unsigned char*)&str[offset];
     return pos;
 }
