@@ -375,6 +375,7 @@ void rtgui_win_hide(struct rtgui_win *win)
         rtgui_widget_hide(RTGUI_WIDGET(win));
         win->flag &= ~RTGUI_WIN_FLAG_ACTIVATE;
     }
+    win->flag &= ~RTGUI_WIN_FLAG_PAINT;
 }
 RTM_EXPORT(rtgui_win_hide);
 
@@ -567,8 +568,14 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_even
         }
 
         win->flag |= RTGUI_WIN_FLAG_ACTIVATE;
-        /* A paint event will follow the active event and the title will be
-         * paint there. */
+        /* If we have been paint before, the topwin may only activate me but
+         * not send an other paint event. If not, the topwin will send a paint
+         * after this, so paint there. */
+        if (win->flag & RTGUI_WIN_FLAG_PAINT)
+        {
+            if (win->_title_wgt)
+                rtgui_widget_update(RTGUI_WIDGET(win->_title_wgt));
+        }
 
         if (win->on_activate != RT_NULL)
         {
@@ -594,9 +601,19 @@ rt_bool_t rtgui_win_event_handler(struct rtgui_object *object, struct rtgui_even
         break;
 
     case RTGUI_EVENT_PAINT:
-        if (win->_title_wgt)
-            rtgui_widget_update(RTGUI_WIDGET(win->_title_wgt));
-        rtgui_win_ondraw(win);
+        if (win->flag & RTGUI_WIN_FLAG_PAINT)
+        {
+            if (win->_title_wgt)
+                rtgui_widget_update(RTGUI_WIDGET(win->_title_wgt));
+            rtgui_win_ondraw(win);
+        }
+        else
+        {
+            win->flag |= RTGUI_WIN_FLAG_PAINT;
+            if (win->_title_wgt)
+                rtgui_widget_update(RTGUI_WIDGET(win->_title_wgt));
+            rtgui_win_ondraw(win);
+        }
         break;
 
 	case RTGUI_EVENT_VPAINT_REQ:

@@ -67,6 +67,7 @@ enum rtgui_win_flag
     RTGUI_WIN_FLAG_HANDLE_KEY  = 0x20,
 
     RTGUI_WIN_FLAG_CB_PRESSED  = 0x40,
+    RTGUI_WIN_FLAG_PAINT       = 0x80,
 };
 
 struct rtgui_win
