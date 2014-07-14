@@ -28,6 +28,7 @@
 #include <rtgui/rtgui_app.h>
 #include <rtgui/widgets/widget.h>
 #include <rtgui/widgets/window.h>
+#include <rtgui/widgets/title.h>
 #include <rtgui/widgets/container.h>
 #include <rtgui/widgets/notebook.h>
 
@@ -584,6 +585,47 @@ void rtgui_widget_update_clip(rtgui_widget_t *widget)
     }
 }
 RTM_EXPORT(rtgui_widget_update_clip);
+
+rtgui_region_status_t rtgui_widget_union_clip(struct rtgui_widget *widget,
+                                              struct rtgui_region *region)
+{
+    rtgui_region_status_t sta;
+
+    RT_ASSERT(widget);
+    RT_ASSERT(region);
+
+    sta = rtgui_region_union(region, region, &widget->clip);
+    if (sta != RTGUI_REGION_STATUS_SUCCESS)
+        return sta;
+
+    if (RTGUI_IS_CONTAINER(widget))
+    {
+        struct rtgui_widget *child;
+        struct rtgui_list_node *node;
+
+        rtgui_list_foreach(node, &(RTGUI_CONTAINER(widget)->children))
+        {
+            child = rtgui_list_entry(node, rtgui_widget_t, sibling);
+
+            sta = rtgui_widget_union_clip(child, region);
+            if (sta != RTGUI_REGION_STATUS_SUCCESS)
+                return sta;
+        }
+        return RTGUI_REGION_STATUS_SUCCESS;
+    }
+    else if (RTGUI_IS_NOTEBOOK(widget))
+    {
+        return rtgui_widget_union_clip(rtgui_notebook_get_current(RTGUI_NOTEBOOK(widget)),
+                                       region);
+    }
+    if (RTGUI_IS_WINTITLE(widget))
+    {
+        return rtgui_widget_union_clip(RTGUI_WIDGET(widget->toplevel), region);
+    }
+
+    return RTGUI_REGION_STATUS_SUCCESS;
+}
+RTM_EXPORT(rtgui_widget_union_clip);
 
 void rtgui_widget_show(struct rtgui_widget *widget)
 {

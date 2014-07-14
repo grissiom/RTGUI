@@ -181,6 +181,8 @@ void rtgui_widget_move_to_logic(rtgui_widget_t *widget, int dx, int dy);
 
 /* update the clip info of widget */
 void rtgui_widget_update_clip(rtgui_widget_t *widget);
+rtgui_region_status_t rtgui_widget_union_clip(struct rtgui_widget *widget,
+                                              struct rtgui_region *region);
 
 /* get the toplevel widget of widget */
 struct rtgui_win *rtgui_widget_get_toplevel(rtgui_widget_t *widget);
